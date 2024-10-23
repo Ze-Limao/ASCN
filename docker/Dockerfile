@@ -1,52 +1,35 @@
-# Dockerfile for the Moonshot application
-# TO DO
-
 FROM ubuntu:24.04
 
 ARG TZ=US
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Define default values for the Enviroment Variables
 ENV SEED=false
 
-RUN apt-get update -y && apt install software-properties-common -y
-
-RUN apt update -y
-
-RUN apt install curl -y
-
-#install python dependencies
-RUN add-apt-repusitory ppa:deadsnakes/ppa -y
-
-RUN apt update -y
-
-RUN apt install python3.11 -y
-
-RUN apt install python3-pip -y
-
-
-RUN python3 get-pip.py
-
-RUN python3 -m pip install --upgrade pip 
-
-#install postgresql dependencies
-
-RUN apt install postgresql -y
-
-RUN apt update -y
-
+# Set the working directory
 WORKDIR moonshot
-COPY . .
 
+# Install necessary system packages
+RUN apt-get update && \
+    apt-get install -y python3 python3-pip python3-venv
 
-RUN pip install -r requirements.txt
+# Create a virtual environment
+RUN python3 -m venv venv
 
-# Copy start script
-COPY ./script.sh .
+RUN venv/bin/pip install --upgrade pip setuptools wheel
 
-# Add execution permission to start script
-RUN chmod +x script.sh
+# Activate the virtual environment and install Python dependencies
+COPY moonshot/requirements.txt .
+
+RUN venv/bin/pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the application files
+COPY moonshot .
+
+# Migration and run server
+COPY script.sh /script.sh
+
+RUN chmod +x /script.sh
 
 EXPOSE 8000
 
-CMD [ "./script.sh" ]
+CMD ["/script.sh"]
