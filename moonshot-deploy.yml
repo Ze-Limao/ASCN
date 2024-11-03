@@ -1,3 +1,6 @@
 ---
 # Playbook to deploy Moonshot and its components
 # TO DO
+
+
+# atualizar automaticamente as seguintes variáveis: app_ip; app_port no ficheiro inventory/gcp.yml
