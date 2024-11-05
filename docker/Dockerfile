@@ -3,7 +3,7 @@ FROM ubuntu:24.04
 ARG TZ=US
 ARG DEBIAN_FRONTEND=noninteractive
 
-ENV SEED=false
+ENV SEED_DATABASE=false
 
 # Set the working directory
 WORKDIR moonshot

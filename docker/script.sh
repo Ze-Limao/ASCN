@@ -3,7 +3,7 @@
 echo ">>> Running migration"
 venv/bin/python manage.py migrate
 
-if [ "$SEED" == "true" ]; then
+if [ "$SEED_DATABASE" == "true" ]; then
   echo ">>> Running seed"
   venv/bin/python seed.py
 fi
