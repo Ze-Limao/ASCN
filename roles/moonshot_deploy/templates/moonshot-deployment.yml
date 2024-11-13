@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moonshot-deployment
+  labels:
+    app: moonshot
+    tier: webserver
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: moonshot
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: moonshot
+        tier: webserver
+    spec:
+      containers:
+        - name: moonshot
+          image: "{{moonshot_image}}"
+          env: # The variables below could be set on a ConfigMap object
+            - name: DB_ALLOW_EMPTY_PASSWORD
+              value: "false"
+            - name: DB_DATABASE
+              value: "{{ db_name }}"
+            - name: DB_USERNAME
+              value: "{{ db_user }}"
+            - name: DB_PASSWORD
+              value: "{{ db_password }}"
+            - name: DB_HOST
+              value: "{{ db_host }}"
+          ports:
+            - containerPort: 8000
+          volumeMounts:
+            - name: moonshot-persistent-storage
+              mountPath: /var/lib/moonshot
+          volumes:
+            - name: moonshot-persistent-storage
+              persistentVolumeClaim:
+                claimName: "{{ pvc_name }}"

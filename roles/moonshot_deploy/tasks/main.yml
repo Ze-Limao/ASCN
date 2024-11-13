@@ -1,0 +1,60 @@
+- name: Create a PVC for moonshot
+  kubernetes.core.k8s:
+    definition: "{{ lookup('template', 'moonshot-pvc.yml') | from_yaml }}"
+    state: present
+    wait: true
+    wait_timeout: 300
+
+- name: Create a Deployment for moonshot
+  kubernetes.core.k8s:
+    definition: "{{ lookup('template', 'moonshot-deployment.yml') | from_yaml }}"
+    state: present
+    wait: true
+    wait_timeout: 180
+
+- name: Create a service for exposing moonshot
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ lookup('template', 'moonshot-service.yml') | from_yaml }}"
+    wait: true
+
+- name: Wait till moonshot pod is created
+  kubernetes.core.k8s_info:
+    kind: Pod
+    namespace: default
+    label_selectors:
+      - app=moonshot
+    wait: true
+    wait_sleep: 5
+    wait_timeout: 180
+  register: moonshot_pod_info
+
+- name: Seed the database
+  kubernetes.core.k8s_exec:
+    namespace: default
+    pod: "{{ moonshot_pod_info.resources[0].metadata.name }}"
+    command: python seed.py
+  when: seed_database is defined and seed_database
+
+- name: Obtain public IP
+  ansible.builtin.command: "curl -s http://ifconfig.me"
+  register: public_ip_result
+
+- name: Define public IP
+  ansible.builtin.replace:
+    path: "moonshot_deploy/vars/main.yml"
+    regexp: "^app_ip:"
+    line: "app_ip:{{ public_ip_result.stdout | trim }}"
+    state: present
+
+- name: Atualizar o valor de app_ip em gcp.yml
+  ansible.builtin.replace:
+    path: "inventory/gcp.yml"
+    regexp: "app_ip: <APP_SERVICE_IP>"
+    replace: "app_ip: {{ app_ip }}"
+
+- name: Atualizar o valor de app_port em gcp.yml
+  ansible.builtin.replace:
+    path: "inventory/gcp.yml"
+    regexp: "app_port: <APP_PORT>"
+    replace: "app_port: {{ app_port }}"

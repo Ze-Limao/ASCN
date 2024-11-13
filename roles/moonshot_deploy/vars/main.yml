@@ -1,0 +1,6 @@
+# Variable that defines the Docker image for moonshot
+moonshot_image: zelimao/ascn2425-g02:latest
+pvc_name: moonshot-pvc
+service_name: moonshot-service
+app_ip: 0.0.0.0
+app_port: 30007

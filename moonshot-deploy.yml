@@ -2,5 +2,10 @@
 # Playbook to deploy Moonshot and its components
 # TO DO
 
-
-# atualizar automaticamente as seguintes variáveis: app_ip; app_port no ficheiro inventory/gcp.yml
+- name: "Install Moonshot with Kubernetes"
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - moonshot_deploy
+  tags:
+    - moonshot_deploy

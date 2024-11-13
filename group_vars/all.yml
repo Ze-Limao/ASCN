@@ -1,0 +1,5 @@
+db_name: moonshot
+db_user: admin
+db_password: password
+db_host: moonshotdb
+db_port: 5432
