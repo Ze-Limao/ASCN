@@ -6,6 +6,5 @@
   hosts: localhost
   gather_facts: false
   roles:
-    - moonshot_deploy
-  tags:
-    - moonshot_deploy
+    - role: moonshot_deploy
+      tags: ["moonshot"]

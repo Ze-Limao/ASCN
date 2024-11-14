@@ -1,9 +1,32 @@
-- name: Create a PVC for moonshot
+- name: Deploy the Postgresql Persistent Volume Claim
   kubernetes.core.k8s:
-    definition: "{{ lookup('template', 'moonshot-pvc.yml') | from_yaml }}"
     state: present
-    wait: true
+    definition: "{{ lookup('template', 'templates/postgresql-pv-claim.yml') }}"
+    wait: yes
     wait_timeout: 300
+
+- name: Deploy the Postgresql Service
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ lookup('template', 'templates/postgresql-service.yml') }}"
+
+- name: Create a service for exposing moonshot
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ lookup('template', 'moonshot-service.yml') | from_yaml }}"
+    wait: true
+
+- name: Deploy the Postgresql Deployment
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ lookup('template', 'templates/postgresql-deployment.yml') }}"
+    wait: yes
+    wait_timeout: 300
+    wait_condition:
+      status: "True"
+      type: Available
+
+#########> Wait for the db to be fully ready
 
 - name: Create a Deployment for moonshot
   kubernetes.core.k8s:
@@ -11,12 +34,6 @@
     state: present
     wait: true
     wait_timeout: 180
-
-- name: Create a service for exposing moonshot
-  kubernetes.core.k8s:
-    state: present
-    definition: "{{ lookup('template', 'moonshot-service.yml') | from_yaml }}"
-    wait: true
 
 - name: Wait till moonshot pod is created
   kubernetes.core.k8s_info:

@@ -1,0 +1,16 @@
+# Service for exposing Postgres
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql-service
+  namespace: default
+  labels:
+    app: postgresql
+    tier: database
+spec:
+  type: ClusterIP
+  selector:
+    app: postgresql
+  ports:
+    - targetPort: 5432 # port that containers are listening on
+      port: 5432 # port number exposed internally in the cluster

@@ -1,3 +1,11 @@
 ---
 # Playbook to undeploy Moonshot and its components
 # TO DO
+
+- name: Undeploy Moonshot
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - moonshot_undeploy
+  tags:
+    - moonshot_undeploy
