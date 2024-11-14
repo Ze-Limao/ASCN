@@ -1,7 +1,7 @@
 - name: Deploy the Postgresql Persistent Volume Claim
   kubernetes.core.k8s:
     state: present
-    definition: "{{ lookup('template', 'templates/postgresql-pv-claim.yml') }}"
+    definition: "{{ lookup('template', 'templates/postgresql-pvc.yml') }}"
     wait: yes
     wait_timeout: 300
 

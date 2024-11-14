@@ -35,7 +35,7 @@ spec:
         - name: POSTGRES_PASSWORD
           value: "{{ db_password }}"
         - name: DB_HOST
-            value: "{{ db_host }}"
+          value: "{{ db_host }}"
         ports:
         - containerPort: 5432
         startupProbe:
