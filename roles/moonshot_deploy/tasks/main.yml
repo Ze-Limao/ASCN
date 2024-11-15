@@ -2,7 +2,7 @@
   kubernetes.core.k8s:
     state: present
     definition: "{{ lookup('template', 'templates/postgresql-pvc.yml') }}"
-    wait: yes
+    wait: true
     wait_timeout: 300
 
 - name: Deploy the Postgresql Service
@@ -20,7 +20,7 @@
   kubernetes.core.k8s:
     state: present
     definition: "{{ lookup('template', 'templates/postgresql-deployment.yml') }}"
-    wait: yes
+    wait: true
     wait_timeout: 300
     wait_condition:
       status: "True"
@@ -58,11 +58,12 @@
   register: public_ip_result
 
 - name: Define public IP
-  ansible.builtin.replace:
+  ansible.builtin.lineinfile:
     path: "moonshot_deploy/vars/main.yml"
     regexp: "^app_ip:"
-    line: "app_ip:{{ public_ip_result.stdout | trim }}"
-    state: present
+    line: "app_ip: {{ public_ip_result.stdout | trim }}"
+    create: yes
+
 
 - name: Atualizar o valor de app_ip em gcp.yml
   ansible.builtin.replace:

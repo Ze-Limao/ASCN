@@ -20,10 +20,8 @@ spec:
     spec:
       containers:
         - name: moonshot
-          image: "{{moonshot_image}}"
+          image: "{{ moonshot_image }}"
           env: # The variables below could be set on a ConfigMap object
-            - name: DB_ALLOW_EMPTY_PASSWORD
-              value: "false"
             - name: DB_DATABASE
               value: "{{ db_name }}"
             - name: DB_USERNAME
@@ -34,10 +32,3 @@ spec:
               value: "{{ db_host }}"
           ports:
             - containerPort: 8000
-          volumeMounts:
-            - name: moonshot-persistent-storage
-              mountPath: /var/lib/moonshot
-          volumes:
-            - name: moonshot-persistent-storage
-              persistentVolumeClaim:
-                claimName: "{{ pvc_name }}"

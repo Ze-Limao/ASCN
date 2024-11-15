@@ -1,5 +1,5 @@
-db_name: moonshot # dbname
-db_user: admin # dbuser
-db_password: password # dbpassword
-db_host: moonshotdb # 127.0.0.1
+db_name: moonshot # dbname # moonshot
+db_user: admin # dbuser # admin
+db_password: password # dbpassword # password
+db_host: moonshotdb # 127.0.0.1 # moonshotdb
 db_port: 5432

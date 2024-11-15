@@ -1,4 +1,3 @@
-
 ---
 # Deployment for postgresql
 apiVersion: apps/v1
@@ -23,30 +22,32 @@ spec:
         tier: database
     spec:
       containers:
-      - name: postgres
-        image: postgres:latest
-        env: # The variables below could be set on a ConfigMap object
-        - name: DB_ALLOW_EMPTY_PASSWORD
-          value: "false"
-        - name: POSTGRES_DB
-          value: "{{ db_name }}"
-        - name: POSTGRES_USER
-          value: "{{ db_user }}"
-        - name: POSTGRES_PASSWORD
-          value: "{{ db_password }}"
-        - name: DB_HOST
-          value: "{{ db_host }}"
-        ports:
-        - containerPort: 5432
-        startupProbe:
-          exec:
-            command: ["/bin/bash", "-c", "pg_isready -h localhost -p 5432"]
-          periodSeconds: 5 
-          failureThreshold: 20
-        volumeMounts:
-        - name: postgresql-persistent-storage
-          mountPath: /var/lib/postgresql/data
+        - name: postgres
+          image: postgres:14
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: "{{ db_name }}"
+            - name: POSTGRES_USER
+              value: "{{ db_user }}"
+            - name: POSTGRES_PASSWORD
+              value: "{{ db_password }}"
+          startupProbe:
+            exec:
+              command:
+                - "/bin/bash"
+                - "-c"
+                - "pg_isready -h localhost -p 5432"
+            failureThreshold: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+          volumeMounts:
+          - name: postgresdata
+            mountPath: /var/lib/postgresql/data
       volumes:
-      - name: postgresql-persistent-storage
+      - name: postgresdata
         persistentVolumeClaim:
-          claimName: "{{ pvc_name }}"
+          claimName: postgresql-pvc
