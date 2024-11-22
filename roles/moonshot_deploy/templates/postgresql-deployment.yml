@@ -4,7 +4,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgresql-deployment
-  namespace: default
   labels:
     app: postgres
     tier: database
@@ -22,32 +21,21 @@ spec:
         tier: database
     spec:
       containers:
-        - name: postgres
-          image: postgres:14
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 5432
-          env:
-            - name: POSTGRES_DB
-              value: "{{ db_name }}"
-            - name: POSTGRES_USER
-              value: "{{ db_user }}"
-            - name: POSTGRES_PASSWORD
-              value: "{{ db_password }}"
-          startupProbe:
-            exec:
-              command:
-                - "/bin/bash"
-                - "-c"
-                - "pg_isready -h localhost -p 5432"
-            failureThreshold: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-          volumeMounts:
-          - name: postgresdata
-            mountPath: /var/lib/postgresql/data
+      - name: postgres
+        image: postgres:14
+        env: # The variables below could be set on a ConfigMap object
+        - name: POSTGRES_DB
+          value: "{{ db_name }}"
+        - name: POSTGRES_USER
+          value: "{{ db_user }}"
+        - name: POSTGRES_PASSWORD
+          value: "{{ db_password }}"
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: postgres-persistent-storage
+          mountPath: /var/lib/postgres
       volumes:
-      - name: postgresdata
+      - name: postgres-persistent-storage
         persistentVolumeClaim:
-          claimName: postgresql-pvc
+          claimName: "{{ pvc_name }}"
