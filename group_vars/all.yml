@@ -3,3 +3,8 @@ db_user: admin # dbuser # admin
 db_password: password # dbpassword # password
 db_host: moonshotdb # 127.0.0.1 # moonshotdb
 db_port: 5432
+seed_database: false
+filename: gcp
+moonshot_image: zelimao/ascn2425-g02:latest
+pvc_name: postgresql-pvc
+service_name: moonshot-service

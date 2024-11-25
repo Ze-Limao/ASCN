@@ -30,5 +30,7 @@ spec:
               value: "{{ db_password }}"
             - name: DB_HOST
               value: "{{ db_host }}"
+            - name: SEED_DATABASE
+              value: "{{ seed_database }}"
           ports:
             - containerPort: 8000
