@@ -1,0 +1,37 @@
+---
+
+- name: Undeploy the postgresql Service
+  kubernetes.core.k8s:
+    state: absent
+    definition: "{{ lookup('template', 'roles/moonshot_deploy/templates/postgresql-service.yml') | from_yaml}}"
+    wait: yes
+    wait_timeout: 300 # 5 minutos
+
+- name: Undeploy the postgresql Deployment
+  kubernetes.core.k8s:
+    state: absent
+    definition: "{{ lookup('template', 'roles/moonshot_deploy/templates/postgresql-deployment.yml') | from_yaml}}"
+    wait: yes
+    wait_timeout: 300 # 5 minutos
+
+- name: Undeploy the moonshot Service
+  kubernetes.core.k8s:
+    state: absent
+    definition: "{{ lookup('template', 'roles/moonshot_deploy/templates/moonshot-service.yml') | from_yaml}}"
+    wait: yes
+    wait_timeout: 300 # 5 minutos
+
+- name: Undeploy the moonshot Deployment
+  kubernetes.core.k8s:
+    state: absent
+    definition: "{{ lookup('template', 'roles/moonshot_deploy/templates/moonshot-deployment.yml') | from_yaml}}"
+    wait: yes
+    wait_timeout: 300 # 5 minutos
+
+- name: Undeploy the postgresql Persistent Volume Claim
+  kubernetes.core.k8s:
+    state: absent
+    definition: "{{ lookup('template', 'roles/moonshot_deploy/templates/postgresql-pvc.yml') | from_yaml}}"
+    wait: yes
+    wait_timeout: 300 # 5 minutos
+  tags: ['pvc'] # ansible-playbook moonshot-undeploy.yml --skip-tags pvc

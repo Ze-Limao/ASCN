@@ -68,28 +68,34 @@
   kubernetes.core.k8s_exec:
     namespace: default
     pod: "{{ moonshot_pod_info.resources[0].metadata.name }}"
-    command:
-      - python
-      - seed.py
+    command: "python /moonshot/seed.py"
   when: seed_database is defined and seed_database
 
-- name: Obtain public IP
-  ansible.builtin.command: "curl -s http://ifconfig.me"
-  register: public_ip_result
+- name: Wait for external IP address
+  kubernetes.core.k8s_info:
+    kind: Service
+    namespace: default
+    label_selectors:
+      - "app=laravel"
+  register: service_info
+  # until: service_info.resources[0].status.loadBalancer.ingress[0].ip is defined #! Testar com esta condição
+  until: service_info.resources[0].status.loadBalancer | length > 0
+  retries: 60
+  delay: 5
 
-- name: Define public IP
-  ansible.builtin.lineinfile:
-    path: "moonshot_deploy/vars/main.yml"
-    regexp: "^app_ip:"
-    line: "app_ip: {{ public_ip_result.stdout | trim }}"
-    create: yes
+- name: Atribuição do IP à variável app_ip
+  set_fact:
+    app_ip: "{{ service_info.resources[0].status.loadBalancer.ingress[0].ip }}"
 
+- name: Display access IP address
+  debug:
+    var: app_ip
 
-- name: Atualizar o valor de app_ip em gcp.yml
-  ansible.builtin.replace:
-    path: "inventory/gcp.yml"
-    regexp: "app_ip: <APP_SERVICE_IP>"
-    replace: "app_ip: {{ app_ip }}"
+- name: Alteração do valor da variável app_ip no ficheiro gcp.yml
+  replace:
+    path: group_vars/all/all.yml
+    regexp: "app_ip:.+"
+    replace: "app_ip: '{{ app_ip }}'"
 
 - name: Atualizar o valor de app_port em gcp.yml
   ansible.builtin.replace:
