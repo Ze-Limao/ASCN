@@ -16,12 +16,12 @@ all:
     app_notifier_email: notifier@moonshot.pt
     app_notifier_password: 123456
     result_code: 200
-    dgc_uvci:
+    dgc_uvci: 01-PT-RE0D07FD450CDB1041C80BA9007A155EBE9FD9-1
     # END Test variables (DO NOT CHANGE)
 
     # APP variables
-    app_ip: <APP_SERVICE_IP> # Needs to be updated
-    app_port: <APP_PORT> # Needs to be updated
+    app_ip: '34.42.67.155'
+    app_port: 80
 
 
     # Additional variables

@@ -1,5 +1,4 @@
 ---
-
 - name: Undeploy the postgresql Service
   kubernetes.core.k8s:
     state: absent
@@ -36,3 +35,10 @@
     wait_timeout: 300 # 5 minutos
   when: delete_data is defined and delete_data == "true"
   ignore_errors: true
+
+- name: Undeploy the Moonshot hpa
+  kubernetes.core.k8s:
+    state: absent
+    definition: "{{ lookup('template', 'roles/moonshot_deploy/templates/moonshot-hpa.yml') | from_yaml}}"
+    wait: yes
+    wait_timeout: 180

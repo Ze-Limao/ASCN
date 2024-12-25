@@ -33,7 +33,7 @@
     wait_sleep: 5
     wait_timeout: 180
   register: postgres_pod_info
-  
+
 - name: Wait until Postgres is ready to accept connections
   kubernetes.core.k8s_exec:
     namespace: default
@@ -94,3 +94,10 @@
     path: inventory/gcp.yml
     regexp: "app_port:.+"
     replace: "app_port: {{ app_port }}"
+
+- name: Deploy the Moonshot hpa
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ lookup('template', 'moonshot-hpa.yml') | from_yaml}}"
+    wait: yes
+    wait_timeout: 180

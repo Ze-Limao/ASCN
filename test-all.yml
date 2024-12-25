@@ -2,6 +2,8 @@
 # 1st test: test deployment and accessability to Moonshot
 - name: "[Test 1] Deploy Moonshot"
   import_playbook: moonshot-deploy.yml
+  vars:
+    seed_database: "true"
   tags: ["test1"]
 
 - name: "[Test 1] Test access to Moonshot"
@@ -29,6 +31,8 @@
 # 3rd test: test undeploy and accessability to Moonshot
 - name: "[Test 3] Undeploy Moonshot (without deleting data)"
   import_playbook: moonshot-undeploy.yml
+  vars:
+    delete_data: "false"
   tags: ["test3"]
 
 - name: "[Test 3] Test access to Moonshot (should fail)"
@@ -41,6 +45,8 @@
 # 4th test: test deployment with previous data
 - name: "[Test 4] Deploy Moonshot (with previous data)"
   import_playbook: moonshot-deploy.yml
+  vars:
+    seed_database: "false"
   tags: ["test4"]
 
 - name: "[Test 4] - Accessing Digital Green Certificate after reboot"
@@ -59,6 +65,8 @@
 
 - name: "[Test 5] Deploy Moonshot (with a clean start)"
   import_playbook: moonshot-deploy.yml
+  vars:
+    seed_database: "true"
   tags: ["test5"]
 
 - name: "[Test 5] - Accessing Digital Green Certificate after clean reboot (should fail)"
