@@ -34,4 +34,5 @@
     definition: "{{ lookup('template', 'roles/moonshot_deploy/templates/postgresql-pvc.yml') | from_yaml}}"
     wait: yes
     wait_timeout: 300 # 5 minutos
-  tags: ['pvc'] # ansible-playbook moonshot-undeploy.yml --skip-tags pvc
+  when: delete_data is defined and delete_data == "true"
+  ignore_errors: true
