@@ -8,3 +8,24 @@
   roles:
     - role: moonshot_deploy
       tags: ["moonshot"]
+
+# Monitoring
+- name: Monitoring Dashboard
+  hosts: localhost
+  gather_facts: false
+  vars:
+    dashboard_file: "vault/DashBoard1.json"
+  tasks:
+    - name: Add monitoring dashboard to project
+      command: >
+        gcloud monitoring dashboards --project="{{ gcp_project }}" 
+        create --config-from-file="{{ dashboard_file }}"
+      when: create_dashboard is defined and create_dashboard == "true"
+
+# Benchmarking
+- name: Benchmarking
+  hosts: localhost  # vms
+  gather_facts: true
+  roles:
+    - role: benchmarking
+      when: benchmarking is defined and benchmarking == "true"
