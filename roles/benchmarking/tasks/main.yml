@@ -1,18 +1,21 @@
 - name: Define benchmark files
   set_fact:
     benchmark_files:
-      - "./benchmarking/Benchmark1.jmx"
+      - "roles/benchmarking/Benchmark1.jmx"
       # we can add more files
 
-- name: Alter apps IPs and Ports in .jmx files
+- name: Alter the app ip in the benchmarking .jmx files
   ansible.builtin.replace:
-    path: "{{ item }}"
-    regexp: "{{ item_regex }}"
-    replace: "{{ item_replace }}"
-  loop:
-    - { item: "{{ benchmark_files[0] }}", item_regex: '(.*)<stringProp name="HTTPSampler.domain">.*', item_replace: '\1<stringProp name="HTTPSampler.domain">{{ app_service_ip.stdout }}</stringProp>' }
-    - { item: "{{ benchmark_files[0] }}", item_regex: '(.*)<stringProp name="HTTPSampler.port">.*', item_replace: '\1<stringProp name="HTTPSampler.port">{{ app_service_port.stdout }}</stringProp>' }
-  when: benchmark_solution is defined and benchmark_solution == "true"
+    path: "{{ playbook_dir }}/{{ benchmark_files[0] }}"
+    regexp: '(.*)<stringProp name="HTTPSampler.domain">.*'
+    replace: '\1<stringProp name="HTTPSampler.domain">{{ app_ip }}</stringProp>'
+
+- name: Alter the app port in the benchmarking .jmx files
+  ansible.builtin.replace:
+    path: "{{ playbook_dir }}/{{ benchmark_files[0] }}"
+    regexp: '(.*)<stringProp name="HTTPSampler.port">.*'
+    replace: '\1<stringProp name="HTTPSampler.port">{{ app_port }}</stringProp>'
+
 
 # Java
 
