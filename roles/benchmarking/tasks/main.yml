@@ -14,23 +14,50 @@
     - { item: "{{ benchmark_files[0] }}", item_regex: '(.*)<stringProp name="HTTPSampler.port">.*', item_replace: '\1<stringProp name="HTTPSampler.port">{{ app_service_port.stdout }}</stringProp>' }
   when: benchmark_solution is defined and benchmark_solution == "true"
 
-# JMeter
+# Java
 
-- name: Download JMeter Binaries (Binaries - version 5.5)
+- name: Check if Java is installed 
+  command: java --version
+  ignore_errors: true
+  register: java_check
+
+- name: Update package manager cache # sudo apt update
+  apt:
+    update_cache: yes
+  become: yes
+  when: java_check.rc != 0 
+
+- name: Install Java
+  apt:
+    name: openjdk-11-jre
+    state: present
+  become: yes
+
+- name: Find Java Home
+  shell: "dirname $(dirname $(update-alternatives --list java | head -n 1))"
+  register: java_home_output
+
+- name: Set JAVA_HOME
+  set_fact:
+    java_home: "{{ java_home_output.stdout }}"
+
+
+# JMeter
+- name: Download JMeter Binaries (Binaries - version 5.6.3)
   get_url:
-    url: "https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.5.tgz"
-    dest: "~/apache-jmeter-5.4.3.tgz"
+    url: "https://dlcdn.apache.org//jmeter/binaries/apache-jmeter-5.6.3.tgz"
+    dest: "~/apache-jmeter-5.6.3.tgz"
 
 - name: Unzip JMeter Binaries
   unarchive:
-    src: "~/apache-jmeter-5.4.3.tgz"
+    src: "~/apache-jmeter-5.6.3.tgz"
     dest: "~/"
     remote_src: yes
 
 - name: Copy .jmx files to JMeter
   ansible.builtin.copy:
-    src: "{{ playbook_dir }}/benchmarking/{{ item }}"
-    dest: "~/apache-jmeter-5.5/{{ item }}"
+    src: "{{ playbook_dir }}/roles/benchmarking/{{ item }}"
+    dest: "~/apache-jmeter-5.6.3/{{ item }}"
   with_items:
     - "Benchmark1.jmx"
   
@@ -43,4 +70,4 @@
 
 - name: Benchmarking 1
   command: >
-    ~/apache-jmeter-5.5/bin/jmeter -n -t {{ playbook_dir }}/benchmarking/Benchmark1.jmx -l {{ playbook_dir }}/benchmarking/logs/Benchmark_{{ date_time.ansible_facts.date_time }}.log
+    ~/apache-jmeter-5.6.3/bin/jmeter -n -t {{ playbook_dir }}/roles/benchmarking/Benchmark1.jmx -l {{ playbook_dir }}/roles/benchmarking/logs/Benchmark1_{{ date_time.ansible_facts.date_time }}.log
