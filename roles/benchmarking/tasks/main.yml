@@ -9,7 +9,7 @@
     path: "{{ playbook_dir }}/{{ benchmark_files[0] }}"
     regexp: '(.*)<stringProp name="HTTPSampler.domain">.*'
     replace: '\1<stringProp name="HTTPSampler.domain">{{ app_ip }}</stringProp>'
-
+  
 - name: Alter the app port in the benchmarking .jmx files
   ansible.builtin.replace:
     path: "{{ playbook_dir }}/{{ benchmark_files[0] }}"
