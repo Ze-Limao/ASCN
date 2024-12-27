@@ -15,11 +15,8 @@
   gather_facts: false
   vars:
     dashboard_file: "vault/DashBoard1.json"
-  tasks:
-    - name: Add monitoring dashboard to project
-      command: >
-        gcloud monitoring dashboards --project="{{ gcp_project }}" 
-        create --config-from-file="{{ dashboard_file }}"
+  roles:
+    - role: monitoring
       when: create_dashboard is defined and create_dashboard == "true"
 
 # Benchmarking

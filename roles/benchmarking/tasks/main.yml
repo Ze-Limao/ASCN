@@ -1,7 +1,7 @@
 - name: Define benchmark files
   set_fact:
     benchmark_files:
-      - "./benchmarking/Benchmark.jmx"
+      - "./benchmarking/Benchmark1.jmx"
       # we can add more files
 
 - name: Alter apps IPs and Ports in .jmx files
@@ -12,7 +12,7 @@
   loop:
     - { item: "{{ benchmark_files[0] }}", item_regex: '(.*)<stringProp name="HTTPSampler.domain">.*', item_replace: '\1<stringProp name="HTTPSampler.domain">{{ app_service_ip.stdout }}</stringProp>' }
     - { item: "{{ benchmark_files[0] }}", item_regex: '(.*)<stringProp name="HTTPSampler.port">.*', item_replace: '\1<stringProp name="HTTPSampler.port">{{ app_service_port.stdout }}</stringProp>' }
-  when: benchmark_solution is defined and (benchmark_solution == "yes" or benchmark_solution == "true")
+  when: benchmark_solution is defined and benchmark_solution == "true"
 
 # JMeter
 
@@ -43,4 +43,4 @@
 
 - name: Benchmarking 1
   command: >
-    ~/apache-jmeter-5.5/bin/jmeter -n -t {{ playbook_dir }}/benchmarking/Benchmark.jmx -l {{ playbook_dir }}/benchmarking/logs/Benchmark_{{ date_time.ansible_facts.date_time }}.log
+    ~/apache-jmeter-5.5/bin/jmeter -n -t {{ playbook_dir }}/benchmarking/Benchmark1.jmx -l {{ playbook_dir }}/benchmarking/logs/Benchmark_{{ date_time.ansible_facts.date_time }}.log

@@ -1,0 +1,4 @@
+- name: Add monitoring dashboard to project
+  command: >
+    gcloud monitoring dashboards --project="{{ gcp_project }}" 
+    create --config-from-file="{{ dashboard_file }}"
