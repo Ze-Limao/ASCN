@@ -16,6 +16,15 @@
     regexp: '(.*)<stringProp name="HTTPSampler.port">.*'
     replace: '\1<stringProp name="HTTPSampler.port">{{ app_port }}</stringProp>'
 
+- name: Verify updated file
+  debug:
+    msg: "Updated with {{ num_threads }} threads"
+    
+- name: Update thread count in the JMeter test plan
+  ansible.builtin.replace:
+    path: "{{ playbook_dir }}/{{ benchmark_files[0] }}"
+    regexp: '<stringProp name="ThreadGroup.num_threads">.*</stringProp>'
+    replace: '<stringProp name="ThreadGroup.num_threads">{{ num_threads }}</stringProp>'
 
 # Java
 

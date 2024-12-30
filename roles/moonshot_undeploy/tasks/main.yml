@@ -34,7 +34,6 @@
     wait: yes
     wait_timeout: 300 # 5 minutos
   when: delete_data is defined and delete_data == "true"
-  ignore_errors: true
 
 - name: Undeploy the Moonshot hpa
   kubernetes.core.k8s:
