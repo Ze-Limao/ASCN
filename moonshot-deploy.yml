@@ -15,7 +15,7 @@
   hosts: localhost
   gather_facts: false
   vars:
-    dashboard_file: "vault/DashBoard1.json"
+    dashboard_file: "vault/DashBoard2.json"
   roles:
     - role: monitoring
       when: create_dashboard is defined and create_dashboard == "true"
