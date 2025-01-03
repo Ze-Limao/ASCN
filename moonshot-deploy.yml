@@ -7,25 +7,4 @@
   gather_facts: false
   roles:
     - role: moonshot_deploy
-      #when: benchmarking is defined and benchmarking == "false"
       tags: ["moonshot"]
-
-# Monitoring
-- name: Monitoring Dashboard
-  hosts: localhost
-  gather_facts: false
-  vars:
-    dashboard_file: "vault/DashBoard2.json"
-  roles:
-    - role: monitoring
-      when: create_dashboard is defined and create_dashboard == "true"
-
-# Benchmarking
-- name: Benchmarking
-  hosts: localhost  # vms
-  gather_facts: true
-  vars:
-    num_threads: 1
-  roles:
-    - role: benchmarking
-      when: benchmarking is defined and benchmarking == "true"

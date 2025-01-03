@@ -1,4 +1,9 @@
+- name: Define dashboard files
+  set_fact:
+    dashboard_files:
+      - "roles/monitoring/DashBoard2.json"
+
 - name: Add monitoring dashboard to project
   command: >
     gcloud monitoring dashboards --project="{{ gcp_project }}" 
-    create --config-from-file="{{ dashboard_file }}"
+    create --config-from-file="{{ dashboard_files[0] }}"

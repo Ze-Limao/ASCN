@@ -1,0 +1,8 @@
+---
+# Monitoring
+
+- name: Monitoring
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - role: monitoring

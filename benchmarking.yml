@@ -1,0 +1,10 @@
+---
+# Benchmarking
+
+- name: Benchmarking
+  hosts: localhost
+  gather_facts: true
+  vars:
+    num_threads: 1
+  roles:
+    - role: benchmarking
